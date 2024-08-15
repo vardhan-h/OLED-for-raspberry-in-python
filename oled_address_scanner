@@ -1,0 +1,29 @@
+from machine import Pin, I2C
+import time
+
+# Initialize I2C with pins and frequency
+i2c = I2C(1, scl=Pin(7), sda=Pin(6), freq=400000)
+
+# SSD1309 commands
+SSD1309_CMD_DISPLAY_OFF = 0xAE
+SSD1309_CMD_DISPLAY_ON = 0xAF
+
+def test_display_connection():
+    try:
+        # Send the display off command
+        i2c.writeto(0x3d, bytes([SSD1309_CMD_DISPLAY_OFF]))
+        time.sleep(0.1)
+        
+        # Send the display on command
+        i2c.writeto(0x3d, bytes([SSD1309_CMD_DISPLAY_ON]))
+        time.sleep(0.1)
+        
+        # If no exceptions occurred, the display is likely connected
+        print("Display is connected.")
+    except OSError as e:
+        # If an exception occurs, the device might not be connected
+        print("Display not found or error occurred:", e)
+
+while True:
+    test_display_connection()
+    time.sleep(5)  # Check every 5 seconds
